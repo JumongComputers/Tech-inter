@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
+// import { TodosResolver } from './todos/todos.resolver';
+import { TodosModule } from './todos/todos.module';
 
 const mongoUri = process.env.MONGO_URI;
 
@@ -9,9 +11,9 @@ if (!mongoUri) {
 }
 
 @Module({
-  imports: [MongooseModule.forRoot(mongoUri)],
+  imports: [MongooseModule.forRoot(mongoUri), TodosModule],
 
   controllers: [AppController],
-  providers: [],
+  // providers: [TodosResolver],
 })
 export class AppModule {}
