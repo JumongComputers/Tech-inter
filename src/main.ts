@@ -5,7 +5,11 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.enableCors(); // important for frontend
+  app.enableCors({
+    origin: ['http://localhost:3000', 'https://tech-inter-front.vercel.app/'],
+    methods: 'GET,POST,PUT,PATCH,DELETE',
+    credentials: true,
+  });
 
   const config = new DocumentBuilder()
     .setTitle('Todo API')

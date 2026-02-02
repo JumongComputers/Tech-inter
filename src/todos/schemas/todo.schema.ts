@@ -1,9 +1,12 @@
-// src/todos/todo.schema.ts
+// src/todos/schemas/todo.schema.ts
+
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
+
+export type TodoDocument = HydratedDocument<Todo>;
 
 @Schema({ timestamps: true })
-export class Todo extends Document {
+export class Todo {
   @Prop({ required: true, trim: true })
   title!: string;
 
