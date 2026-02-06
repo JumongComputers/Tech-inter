@@ -9,35 +9,48 @@ import { UpdateTodoDto } from './dto/update-todo.dto';
 export class TodosService {
   constructor(
     @InjectModel(Todo.name)
-    private todoModel: Model<TodoDocument>,
+    private readonly todoModel: Model<TodoDocument>,
   ) {}
 
-  async create(createTodoDto: CreateTodoDto) {
+  async create(createTodoDto: CreateTodoDto): Promise<Todo> {
     const todo = new this.todoModel(createTodoDto);
     return todo.save();
   }
 
-  async findAll() {
-    return this.todoModel.find().sort({ createdAt: -1 });
+  async findAll(): Promise<Todo[]> {
+    return this.todoModel.find().sort({ createdAt: -1 }).lean().exec();
   }
 
-  async findOne(id: string) {
-    const todo = await this.todoModel.findById(id);
-    if (!todo) throw new NotFoundException('Todo not found');
+  async findOne(id: string): Promise<Todo> {
+    const todo = await this.todoModel.findById(id).lean().exec();
+
+    if (!todo) {
+      throw new NotFoundException('Todo not found');
+    }
+
     return todo;
   }
 
-  async update(id: string, updateTodoDto: UpdateTodoDto) {
-    const todo = await this.todoModel.findByIdAndUpdate(id, updateTodoDto, {
-      new: true,
-    });
-    if (!todo) throw new NotFoundException('Todo not found');
+  async update(id: string, updateTodoDto: UpdateTodoDto): Promise<Todo> {
+    const todo = await this.todoModel
+      .findByIdAndUpdate(id, updateTodoDto, { new: true })
+      .lean()
+      .exec();
+
+    if (!todo) {
+      throw new NotFoundException('Todo not found');
+    }
+
     return todo;
   }
 
-  async remove(id: string) {
-    const todo = await this.todoModel.findByIdAndDelete(id);
-    if (!todo) throw new NotFoundException('Todo not found');
+  async remove(id: string): Promise<{ message: string }> {
+    const todo = await this.todoModel.findByIdAndDelete(id).exec();
+
+    if (!todo) {
+      throw new NotFoundException('Todo not found');
+    }
+
     return { message: 'Todo deleted successfully' };
   }
 }
